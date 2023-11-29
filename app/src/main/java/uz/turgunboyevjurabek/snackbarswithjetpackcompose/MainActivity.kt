@@ -1,7 +1,9 @@
 package uz.turgunboyevjurabek.snackbarswithjetpackcompose
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -23,6 +27,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -31,9 +38,32 @@ import uz.turgunboyevjurabek.snackbarswithjetpackcompose.ui.theme.SnackbarsWithJ
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
+            val context = LocalContext.current
             SnackbarsWithJetpackComposeTheme {
-                ViewUi()
+                Column( horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 30.dp)) {
+                    snacbar()
+                    val rasm= painterResource(id = R.drawable.ic_launcher_foreground)
+                    Button(onClick = {  }) {
+                        Text(text = "alertDialog")
+                    }
+
+                    alertDialogExample(
+                        context = context,
+                        title = "Assalom alekum",
+                        text = "Nima gaaaaaaaaaaaaap",
+                        icon = rasm
+                    )
+
+                }
+
+
+
              }
            }
         }
@@ -44,13 +74,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     SnackbarsWithJetpackComposeTheme {
-        ViewUi()
+        snacbar()
     }
 }
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewUi(){
+fun snacbar(){
     var textfaildState by remember{
         mutableStateOf("")
     }
@@ -100,5 +130,14 @@ fun ViewUi(){
         }
     }
 
+
+}
+
+@Composable
+fun alertDialogExample(context:Context,title:String,text:String,icon:Painter){
+
+    AlertDialog(onDismissRequest = { Toast.makeText(context, "onDismiss", Toast.LENGTH_SHORT).show()}, confirmButton = {
+        Toast.makeText(context, "Confirm", Toast.LENGTH_SHORT).show() }, icon = { Icon(painter =icon, contentDescription =text)},
+        title = { Text(text = title)}, text = { Text(text = text)})
 
 }
