@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -27,9 +28,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -48,18 +48,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .padding(horizontal = 30.dp)) {
                     snacbar()
-                    val rasm= painterResource(id = R.drawable.ic_launcher_foreground)
-                    Button(onClick = {  }) {
-                        Text(text = "alertDialog")
-                    }
-
-                    alertDialogExample(
-                        context = context,
-                        title = "Assalom alekum",
-                        text = "Nima gaaaaaaaaaaaaap",
-                        icon = rasm
-                    )
-
+                    openAlertDialogExample()
                 }
 
 
@@ -74,7 +63,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     SnackbarsWithJetpackComposeTheme {
-        snacbar()
+        Column {
+            snacbar()
+            openAlertDialogExample()
+        }
+
     }
 }
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -90,16 +83,10 @@ fun snacbar(){
 
     Scaffold(snackbarHost = {
         SnackbarHost(hostState = snackbarHostState)
-    },
-        ) {
-
-
+    }) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 30.dp)
+                .padding(horizontal = 30.dp, vertical = 30.dp)
         ) {
             TextField(value = textfaildState, label = {
                 Text(text = "Enter your name")
@@ -110,6 +97,7 @@ fun snacbar(){
                 modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
+
                 scope.launch {
 
                     val result=snackbarHostState.showSnackbar(message = textfaildState,
@@ -134,10 +122,40 @@ fun snacbar(){
 }
 
 @Composable
-fun alertDialogExample(context:Context,title:String,text:String,icon:Painter){
-
-    AlertDialog(onDismissRequest = { Toast.makeText(context, "onDismiss", Toast.LENGTH_SHORT).show()}, confirmButton = {
-        Toast.makeText(context, "Confirm", Toast.LENGTH_SHORT).show() }, icon = { Icon(painter =icon, contentDescription =text)},
+fun alertDialogExample( onDismissRequest: () -> Unit,
+                        onConfirmation: () -> Unit,
+                        context:Context,
+                        title:String,
+                        text:String,
+                        icon:ImageVector)
+{
+    AlertDialog(onDismissRequest = { Toast.makeText(context, "onDismiss", Toast.LENGTH_SHORT).show() }, confirmButton = {
+        Toast.makeText(context, "Confirm", Toast.LENGTH_SHORT).show() }, icon = {icon },
         title = { Text(text = title)}, text = { Text(text = text)})
+}
+
+@Composable
+fun openAlertDialogExample(){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        var showDialog by remember { mutableStateOf(false) }
+        val context= LocalContext.current
+        if (showDialog){
+            alertDialogExample(
+                onDismissRequest = {showDialog=false },
+                onConfirmation = { showDialog=false },
+                context = context,
+                title = "Assalom alekum",
+                text = "Android app with Jetpack Compose",
+                icon = Icons.Default.Star
+            )
+        }
+        Button(onClick = { showDialog = true },) {
+            Text(text = "AlertDialog")
+        }
+
+    }
 
 }
